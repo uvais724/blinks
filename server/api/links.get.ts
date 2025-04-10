@@ -10,6 +10,8 @@ interface LinkResponse {
 
 export default defineEventHandler(async (event): Promise<LinkResponse> => {
   try {
+    connectToDatabase(); // Ensure MongoDB connection is established
+    
     // Fetch links, sorted by newest first, and populate the 'createdBy' field
     const links = await Link.find()
       .sort({ createdAt: -1 })
