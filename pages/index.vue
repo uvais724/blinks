@@ -9,7 +9,7 @@
     >
       <!-- Delete Button -->
       <button
-        @click="deleteLink(link._id)"
+        @click="openDeleteConfirmation(link._id)"
         class="absolute top-2 right-2 text-red-500 hover:text-red-700"
         aria-label="Delete Link"
       >
@@ -32,6 +32,18 @@
       <a :href="link.url" target="_blank" class="btn btn-primary">Open</a>
     </div>
   </div>
+
+  <!-- Confirmation Modal -->
+  <div v-if="showDeleteModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+      <h2 class="text-lg font-bold mb-4">Confirm Deletion</h2>
+      <p class="text-sm text-gray-600 mb-6">Are you sure you want to delete this link?</p>
+      <div class="flex justify-end gap-4">
+        <button @click="closeDeleteConfirmation" class="btn btn-secondary">No</button>
+        <button @click="confirmDelete" class="btn btn-primary">Yes</button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -51,12 +63,12 @@ interface Link {
 }
 
 const links = ref<Link[]>([]);
+const showDeleteModal = ref(false);
+const linkToDelete = ref<string | null>(null);
 
 // Fetch links when the component is mounted
 const fetchLinks = async () => {
-  console.log("Fetching links...");
   const { data } = await useFetch<{ success: boolean; links?: Link[] }>('/api/links').json();
-
   if (data.value?.success && data.value.links) {
     links.value = data.value.links; // Populate the links array
   }
@@ -68,22 +80,38 @@ const addNewLink = (newLink: Link) => {
   links.value.unshift(newLink); // Add the new link to the beginning of the array
 };
 
-// Delete a link by its ID
-const deleteLink = async (id: string) => {
+// Open the delete confirmation modal
+const openDeleteConfirmation = (id: string) => {
+  linkToDelete.value = id;
+  showDeleteModal.value = true;
+};
+
+// Close the delete confirmation modal
+const closeDeleteConfirmation = () => {
+  linkToDelete.value = null;
+  showDeleteModal.value = false;
+};
+
+// Confirm deletion
+const confirmDelete = async () => {
+  if (!linkToDelete.value) return;
+
   try {
-    const response = await fetch(`/api/links/${id}`, {
+    const response = await fetch(`/api/links/${linkToDelete.value}`, {
       method: 'DELETE',
     });
     const result = await response.json();
 
     if (result.success) {
-      links.value = links.value.filter((link) => link._id !== id); // Remove the deleted link from the array
-      console.log(`Link with ID ${id} deleted successfully.`);
+      links.value = links.value.filter((link) => link._id !== linkToDelete.value); // Remove the deleted link from the array
+      console.log(`Link with ID ${linkToDelete.value} deleted successfully.`);
     } else {
-      console.error(`Failed to delete link with ID ${id}:`, result.error);
+      console.error(`Failed to delete link with ID ${linkToDelete.value}:`, result.error);
     }
   } catch (error) {
-    console.error(`An error occurred while deleting the link with ID ${id}:`, error);
+    console.error(`An error occurred while deleting the link with ID ${linkToDelete.value}:`, error);
+  } finally {
+    closeDeleteConfirmation();
   }
 };
 
