@@ -2,8 +2,7 @@ import mongoose, { Document, Schema, Model } from 'mongoose';
 
 interface ILink extends Document {
   url: string;
-  //createdBy: mongoose.Types.ObjectId;
-  createdBy:string;
+  createdBy: mongoose.Types.ObjectId;
   createdAt: Date;
   title: string;
   description: string;
@@ -17,8 +16,7 @@ interface ILink extends Document {
 
 const LinkSchema: Schema = new Schema({
   url: { type: String, required: true },
-  //createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  createdBy: { type: String, required: true },
+  createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   createdAt: { type: Date, default: Date.now },
   title: { type: String, required: true },
   description: { type: String, default: '' },

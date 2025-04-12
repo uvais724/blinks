@@ -34,6 +34,10 @@ const url = ref<string>('');
 const previewData = ref<PreviewData | null>(null);
 const emit = defineEmits(['link-saved']);
 
+const currentUser = ref<{ _id: string } | null>({
+  _id: '67fa40448139571853da666a', // Use a plain string instead of ObjectId
+});
+
 const handleSubmit = async () => {
   const response = await $fetch<{ success: boolean; data?: PreviewData }>('/api/links/preview', {
     method: 'POST',
@@ -43,12 +47,17 @@ const handleSubmit = async () => {
 };
 
 const saveLink = async () => {
+  if (!currentUser.value) {
+    console.error('currentUser is null');
+    return;
+  }
+
   const response = await $fetch<{ success: boolean; link?: any }>('/api/links/create', {
     method: 'POST',
     body: {
       url: url.value,
       ...previewData.value,
-      createdBy: 'uvais', // Replace with auth user ID
+      createdBy: currentUser.value._id, // Replace with auth user ID
     },
   });
   if (response.success && response.link) {

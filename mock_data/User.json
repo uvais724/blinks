@@ -1,0 +1,11 @@
+[
+    {
+      "username": "john_doe",
+      "email": "john.doe@example.com",
+      "displayName": "John Doe",
+      "avatarUrl": "https://example.com/avatars/john_doe.jpg",
+      "createdAt": "2023-01-15T10:00:00Z",
+      "followers": [],
+      "following": []
+    }
+  ]
