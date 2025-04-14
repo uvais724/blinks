@@ -123,6 +123,7 @@ interface Link {
 interface Collection {
   _id: string;
   title: string;
+  links: Link[]; // Add the links property to the Collection interface
 }
 
 const activeTab = ref<string>('saved'); // Track the active tab
@@ -255,13 +256,30 @@ const confirmDelete = async () => {
   if (!linkToDelete.value) return;
 
   try {
+    // Delete the link and remove it from any associated collections
     const response = await fetch(`/api/links/${linkToDelete.value}`, {
       method: 'DELETE',
     });
     const result = await response.json();
 
     if (result.success) {
-      links.value = links.value.filter((link) => link._id !== linkToDelete.value); // Remove the deleted link from the array
+      // Remove the deleted link from the `links` array
+      links.value = links.value.filter((link) => link._id !== linkToDelete.value);
+
+      // Remove the link from any associated collections
+      collections.value = collections.value.filter((collection) => {
+        // Remove the link from the collection
+        collection.links = collection.links.filter((link) => link._id !== linkToDelete.value);
+
+        // If the collection becomes empty, delete it
+        if (collection.links.length === 0) {
+          deleteCollection(collection._id); // Call the deleteCollection function
+          return false; // Remove the collection from the collections array
+        }
+
+        return true; // Keep the collection if it still has links
+      });
+
       console.log(`Link with ID ${linkToDelete.value} deleted successfully.`);
     } else {
       console.error(`Failed to delete link with ID ${linkToDelete.value}:`, result.error);
@@ -270,6 +288,23 @@ const confirmDelete = async () => {
     console.error(`An error occurred while deleting the link with ID ${linkToDelete.value}:`, error);
   } finally {
     closeDeleteConfirmation();
+  }
+};
+
+const deleteCollection = async (collectionId: string) => {
+  try {
+    const response = await fetch(`/api/collections/${collectionId}`, {
+      method: 'DELETE',
+    });
+    const result = await response.json();
+
+    if (result.success) {
+      console.log(`Collection with ID ${collectionId} deleted successfully.`);
+    } else {
+      console.error(`Failed to delete collection with ID ${collectionId}:`, result.error);
+    }
+  } catch (error) {
+    console.error(`An error occurred while deleting the collection with ID ${collectionId}:`, error);
   }
 };
 
