@@ -246,5 +246,6 @@ const confirmDelete = async () => {
 // Fetch links and collections on component mount
 onMounted(() => {
   fetchLinks();
+  fetchCollections();
 });
 </script>

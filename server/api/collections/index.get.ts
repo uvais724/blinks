@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
   // }
 
   try {
-    const collections = await Collection.find({ createdBy: userId.value?._id }).select('_id title description coverImage links');
+    const collections = await Collection.find({ createdBy: userId.value?._id }).select('_id title description coverImage links').populate('links').sort({ createdAt: -1 });
     console.log('collections', collections);
     return {
       success: true,
