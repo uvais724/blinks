@@ -35,7 +35,7 @@ const previewData = ref<PreviewData | null>(null);
 const emit = defineEmits(['link-saved']);
 
 const currentUser = ref<{ _id: string } | null>({
-  _id: '67fa40448139571853da666a', // Use a plain string instead of ObjectId
+  _id: '67fa64158139571853da6676', // Use a plain string instead of ObjectId
 });
 
 const handleSubmit = async () => {

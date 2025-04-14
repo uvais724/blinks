@@ -28,6 +28,11 @@
           <span class="text-sm text-gray-500">@{{ link.createdBy.username }}</span>
         </div>
       </div>
+      <!-- Add to collection Button -->
+      <button class="btn btn-secondary" @click="openAddToCollectionPopup(link._id)">
+        Add to Collection
+      </button>
+
       <!-- Open Button -->
       <a :href="link.url" target="_blank" class="btn btn-primary">Open</a>
     </div>
@@ -41,6 +46,38 @@
       <div class="flex justify-end gap-4">
         <button @click="closeDeleteConfirmation" class="btn btn-secondary">No</button>
         <button @click="confirmDelete" class="btn btn-primary">Yes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add to Collection Modal -->
+  <div v-if="showAddToCollectionModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+      <h2 class="text-lg font-bold mb-4">Add to Collection</h2>
+      <div class="mb-4" v-if="collections.length > 0">
+        <label class="block text-sm font-medium text-gray-700">Select a Collection</label>
+        <select v-model="selectedCollectionId" class="select select-bordered w-full">
+          <option v-for="collection in collections" :key="collection._id" :value="collection._id">
+            {{ collection.name }}
+          </option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label class="flex items-center gap-2">
+          <input type="checkbox" v-model="createNewCollection" />
+          <span>Create a New Collection</span>
+        </label>
+        <input
+          v-if="createNewCollection"
+          v-model="newCollectionName"
+          type="text"
+          placeholder="Enter collection name"
+          class="input input-bordered w-full mt-2"
+        />
+      </div>
+      <div class="flex justify-end gap-4">
+        <button @click="closeAddToCollectionPopup" class="btn btn-secondary">Cancel</button>
+        <button @click="addToCollection" class="btn btn-primary">Add</button>
       </div>
     </div>
   </div>
@@ -62,9 +99,20 @@ interface Link {
   };
 }
 
+interface Collection {
+  _id: string;
+  name: string;
+}
+
 const links = ref<Link[]>([]);
 const showDeleteModal = ref(false);
+const collections = ref<Collection[]>([]);
 const linkToDelete = ref<string | null>(null);
+const showAddToCollectionModal = ref(false);
+const selectedCollectionId = ref<string | null>(null);
+const createNewCollection = ref(false);
+const newCollectionName = ref('');
+const linkToAdd = ref<string | null>(null);
 
 // Fetch links when the component is mounted
 const fetchLinks = async () => {
@@ -73,6 +121,74 @@ const fetchLinks = async () => {
     links.value = data.value.links; // Populate the links array
   }
   console.log("Fetched links:", links.value);
+};
+
+// Fetch collections when the component is mounted
+const fetchCollections = async () => {
+  const { data } = await useFetch<{ success: boolean; collections?: Collection[] }>('/api/collections').json();
+  if (data.value?.success && data.value.collections) {
+    collections.value = data.value.collections; // Populate the collections array
+  }
+};
+
+// Open the Add to Collection popup
+const openAddToCollectionPopup = (linkId: string) => {
+  linkToAdd.value = linkId;
+  showAddToCollectionModal.value = true;
+};
+
+// Close the Add to Collection popup
+const closeAddToCollectionPopup = () => {
+  linkToAdd.value = null;
+  selectedCollectionId.value = null;
+  createNewCollection.value = false;
+  newCollectionName.value = '';
+  showAddToCollectionModal.value = false;
+};
+
+// Add the link to the collection
+const addToCollection = async () => {
+  if (!linkToAdd.value) return;
+
+  try {
+    if (createNewCollection.value && newCollectionName.value) {
+      // Create a new collection and add the link
+      const response = await fetch('/api/collections/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newCollectionName.value, linkId: linkToAdd.value }),
+      });
+      const result = await response.json();
+
+      if (result.success) {
+        alert('Link added to new collection successfully!');
+        fetchCollections(); // Refresh collections
+      } else {
+        console.error('Error creating collection:', result.error);
+        alert(result.error);
+      }
+    } else if (selectedCollectionId.value) {
+      // Add the link to an existing collection
+      const response = await fetch('/api/collections/addToCollection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ collectionId: selectedCollectionId.value, linkId: linkToAdd.value }),
+      });
+      const result = await response.json();
+
+      if (result.success) {
+        alert('Link added to collection successfully!');
+      } else {
+        console.error('Error adding link to collection:', result.error);
+        alert(result.error);
+      }
+    }
+  } catch (error) {
+    console.error('An error occurred while adding the link to the collection:', error);
+    alert('An error occurred. Please try again.');
+  } finally {
+    closeAddToCollectionPopup();
+  }
 };
 
 // Add a new link to the top of the list
@@ -115,6 +231,9 @@ const confirmDelete = async () => {
   }
 };
 
-// Fetch links on component mount
-onMounted(fetchLinks);
+// Fetch links and collections on component mount
+onMounted(() => {
+  fetchLinks();
+  fetchCollections();
+});
 </script>
