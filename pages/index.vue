@@ -2,26 +2,23 @@
   <h1 class="text-3xl font-bold text-center my-4">Welcome to the Link Sharing App</h1>
   <LinkSubmitForm @link-saved="addNewLink" />
 
-    <!-- Tabs -->
+  <!-- Tabs -->
   <div class="tabs tabs-boxed mb-4">
     <a class="tab" :class="{ 'tab-active': activeTab === 'saved' }" @click="activeTab = 'saved'">Saved</a>
-    <a class="tab" :class="{ 'tab-active': activeTab === 'collections' }" @click="activeTab = 'collections'">Collections</a>
+    <a class="tab" :class="{ 'tab-active': activeTab === 'collections' }"
+      @click="activeTab = 'collections'">Collections</a>
   </div>
 
-  <div  v-if="activeTab === 'saved'" class="grid grid-cols-1 gap-4">
-    <div
-      v-for="link in links"
-      :key="link._id"
-      class="relative flex items-center gap-4 bg-base-100 shadow-xl p-4 rounded-lg h-32"
-    >
+  <div v-if="activeTab === 'saved'" class="grid grid-cols-1 gap-4">
+    <div v-for="link in links" :key="link._id"
+      class="relative flex items-center gap-4 bg-base-100 shadow-xl p-4 rounded-lg h-32">
       <!-- Delete Button -->
-      <button
-        @click="openDeleteConfirmation(link._id)"
-        class="absolute top-2 right-2 text-red-500 hover:text-red-700"
-        aria-label="Delete Link"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m-7 0a2 2 0 012-2h4a2 2 0 012 2m-6 0v0" />
+      <button @click="openDeleteConfirmation(link._id)" class="absolute top-2 right-2 text-red-500 hover:text-red-700"
+        aria-label="Delete Link">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+          stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m-7 0a2 2 0 012-2h4a2 2 0 012 2m-6 0v0" />
         </svg>
       </button>
       <!-- Thumbnail -->
@@ -29,7 +26,9 @@
       <!-- Link Details -->
       <div class="flex-1">
         <h2 class="font-bold text-lg">{{ link.title }}</h2>
-        <p class="text-sm text-gray-600 truncate">{{ link.description }}</p>
+        <p class="text-sm text-gray-600">
+          {{ truncatedDescription(link.description) }}
+        </p>
         <div class="flex items-center gap-2 mt-2">
           <img :src="link.createdBy.avatarUrl" class="w-6 h-6 rounded-full" />
           <span class="text-sm text-gray-500">@{{ link.createdBy.username }}</span>
@@ -58,7 +57,8 @@
   </div>
 
   <!-- Add to Collection Modal -->
-  <div v-if="showAddToCollectionModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+  <div v-if="showAddToCollectionModal"
+    class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-lg shadow-lg w-96">
       <h2 class="text-lg font-bold mb-4">Add to Collection</h2>
       <div class="mb-4" v-if="!createNewCollection && collections.length > 0">
@@ -78,17 +78,10 @@
       </div>
       <!-- New Collection Fields -->
       <div v-if="createNewCollection" class="mb-4">
-        <input
-          v-model="newCollectionName"
-          type="text"
-          placeholder="Enter collection name"
-          class="input input-bordered w-full mt-2"
-        />
-        <textarea
-          v-model="newCollectionDescription"
-          placeholder="Enter collection description"
-          class="textarea textarea-bordered w-full mt-2"
-        ></textarea>
+        <input v-model="newCollectionName" type="text" placeholder="Enter collection name"
+          class="input input-bordered w-full mt-2" />
+        <textarea v-model="newCollectionDescription" placeholder="Enter collection description"
+          class="textarea textarea-bordered w-full mt-2"></textarea>
         <!-- Error Message -->
         <p v-if="errorMessage" class="text-red-500 text-sm mt-2">{{ errorMessage }}</p>
       </div>
@@ -98,7 +91,7 @@
         <button @click="addToCollection" class="btn btn-primary">Add</button>
       </div>
     </div>
-</div>
+  </div>
 
   <!-- Collections Tab -->
   <CollectionsTab v-if="activeTab === 'collections'" />
@@ -138,6 +131,14 @@ const newCollectionName = ref('');
 const newCollectionDescription = ref(''); // New collection description
 const linkToAdd = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
+const maxDescriptionLength = 500; // Maximum number of characters for the description
+
+// Function to truncate the description
+const truncatedDescription = (description: string) => {
+  return description.length > maxDescriptionLength
+    ? description.slice(0, maxDescriptionLength) + '...'
+    : description;
+};
 
 // Fetch links when the component is mounted
 const fetchLinks = async () => {
