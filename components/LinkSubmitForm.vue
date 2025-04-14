@@ -76,19 +76,42 @@ const saveLink = async () => {
     return;
   }
 
-  const response = await $fetch<{ success: boolean; link?: any }>('/api/links/create', {
-    method: 'POST',
-    body: {
-      url: url.value,
-      ...previewData.value,
-      createdBy: currentUser.value._id, // Replace with auth user ID
-    },
-  });
-  if (response.success && response.link) {
-    alert('Link saved!');
-    emit('link-saved', response.link); // Emit the saved link
-    previewData.value = null; // Clear the preview
-    url.value = ''; // Reset the input field
+  try {
+    // Check if the link already exists in the database
+    const checkResponse = await $fetch<{ success: boolean; exists: boolean }>('/api/links/check', {
+      method: 'POST',
+      body: { title: previewData.value?.title },
+    });
+    console.log('Check response:', checkResponse); // Debugging log
+
+    if (checkResponse.success && checkResponse.exists) {
+      alert('This link already exists in the database.');
+      previewData.value = null; // Clear the preview
+      url.value = ''; // Reset the input field
+      return; // Prevent saving the link
+    }
+
+    // Proceed to save the link if it doesn't exist
+    const response = await $fetch<{ success: boolean; link?: any }>('/api/links/create', {
+      method: 'POST',
+      body: {
+        url: url.value,
+        ...previewData.value,
+        createdBy: currentUser.value._id, // Replace with auth user ID
+      },
+    });
+
+    if (response.success && response.link) {
+      alert('Link saved!');
+      emit('link-saved', response.link); // Emit the saved link
+      previewData.value = null; // Clear the preview
+      url.value = ''; // Reset the input field
+    } else {
+      alert('Failed to save the link. Please try again.');
+    }
+  } catch (error) {
+    console.error('An error occurred while saving the link:', error);
+    alert('An error occurred. Please try again.');
   }
 };
 </script>
