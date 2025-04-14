@@ -61,7 +61,7 @@
   <div v-if="showAddToCollectionModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-lg shadow-lg w-96">
       <h2 class="text-lg font-bold mb-4">Add to Collection</h2>
-      <div class="mb-4" v-if="collections.length > 0">
+      <div class="mb-4" v-if="!createNewCollection && collections.length > 0">
         <label class="block text-sm font-medium text-gray-700">Select a Collection</label>
         <select v-model="selectedCollectionId" class="select select-bordered w-full">
           <option v-for="collection in collections" :key="collection._id" :value="collection._id">
@@ -81,6 +81,13 @@
           placeholder="Enter collection name"
           class="input input-bordered w-full mt-2"
         />
+        <!-- TextArea -->
+        <textarea
+          v-if="createNewCollection"
+          v-model="newCollectionDescription"
+          placeholder="Enter collection description"
+          class="textarea textarea-bordered w-full mt-2"
+        ></textarea>
       </div>
       <div class="flex justify-end gap-4">
         <button @click="closeAddToCollectionPopup" class="btn btn-secondary">Cancel</button>
@@ -123,6 +130,7 @@ const showAddToCollectionModal = ref(false);
 const selectedCollectionId = ref<string | null>(null);
 const createNewCollection = ref(false);
 const newCollectionName = ref('');
+const newCollectionDescription = ref(''); // New collection description
 const linkToAdd = ref<string | null>(null);
 
 // Fetch links when the component is mounted
@@ -155,6 +163,7 @@ const closeAddToCollectionPopup = () => {
   selectedCollectionId.value = null;
   createNewCollection.value = false;
   newCollectionName.value = '';
+  newCollectionDescription.value = '';
   showAddToCollectionModal.value = false;
 };
 
@@ -168,7 +177,7 @@ const addToCollection = async () => {
       const response = await fetch('/api/collections/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newCollectionName.value, linkId: linkToAdd.value }),
+        body: JSON.stringify({ name: newCollectionName.value, description: newCollectionDescription.value, linkId: linkToAdd.value }),
       });
       const result = await response.json();
 

@@ -9,7 +9,7 @@
         <div class="flex items-center justify-between">
           <div class="flex-1">
             <h2 class="font-bold text-lg">{{ collection.title }}</h2>
-            <p class="text-sm text-gray-600 truncate">Collection ID: {{ collection._id }}</p>
+            <p class="text-sm text-gray-600 truncate">Description: {{ collection.description }}</p>
           </div>
           <!-- Toggle View Button -->
           <button
@@ -72,6 +72,7 @@
   interface Collection {
     _id: string;
     title: string;
+    description: string;
     links: Link[]; // Array of links related to the collection
   }
   

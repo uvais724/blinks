@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
   //   };
   // }
 
-  const { name, linkId } = await readBody(event);
+  const { name, description, linkId } = await readBody(event);
 
   if (!name) {
     return {
@@ -31,6 +31,7 @@ export default defineEventHandler(async (event) => {
   try {
     const newCollection = new Collection({
       title: name,
+      description: description,
       createdBy: userId.value?._id, // Use the userId from authentication
       links: linkId ? [linkId] : [],
     });
