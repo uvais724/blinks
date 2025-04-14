@@ -1,7 +1,14 @@
 <template>
   <h1 class="text-3xl font-bold text-center my-4">Welcome to the Link Sharing App</h1>
   <LinkSubmitForm @link-saved="addNewLink" />
-  <div class="grid grid-cols-1 gap-4">
+
+    <!-- Tabs -->
+  <div class="tabs tabs-boxed mb-4">
+    <a class="tab" :class="{ 'tab-active': activeTab === 'saved' }" @click="activeTab = 'saved'">Saved</a>
+    <a class="tab" :class="{ 'tab-active': activeTab === 'collections' }" @click="activeTab = 'collections'">Collections</a>
+  </div>
+
+  <div  v-if="activeTab === 'saved'" class="grid grid-cols-1 gap-4">
     <div
       v-for="link in links"
       :key="link._id"
@@ -58,7 +65,7 @@
         <label class="block text-sm font-medium text-gray-700">Select a Collection</label>
         <select v-model="selectedCollectionId" class="select select-bordered w-full">
           <option v-for="collection in collections" :key="collection._id" :value="collection._id">
-            {{ collection.name }}
+            {{ collection.title }}
           </option>
         </select>
       </div>
@@ -81,6 +88,23 @@
       </div>
     </div>
   </div>
+
+  <!-- Collections Tab -->
+  <div v-if="activeTab === 'collections'" class="grid grid-cols-1 gap-4">
+    <div
+      v-for="collection in collections"
+      :key="collection._id"
+      class="relative flex items-center gap-4 bg-base-100 shadow-xl p-4 rounded-lg h-32"
+    >
+      <!-- Collection Details -->
+      <div class="flex-1">
+        <h2 class="font-bold text-lg">{{ collection.title }}</h2>
+        <p class="text-sm text-gray-600 truncate">Collection ID: {{ collection._id }}</p>
+      </div>
+      <!-- View Collection Button -->
+      <button class="btn btn-primary" @click="viewCollection(collection._id)">View</button>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -101,9 +125,10 @@ interface Link {
 
 interface Collection {
   _id: string;
-  name: string;
+  title: string;
 }
 
+const activeTab = ref<string>('saved'); // Track the active tab
 const links = ref<Link[]>([]);
 const showDeleteModal = ref(false);
 const collections = ref<Collection[]>([]);
@@ -129,6 +154,7 @@ const fetchCollections = async () => {
   if (data.value?.success && data.value.collections) {
     collections.value = data.value.collections; // Populate the collections array
   }
+  console.log("Fetched collections:", collections.value);
 };
 
 // Open the Add to Collection popup
@@ -229,6 +255,11 @@ const confirmDelete = async () => {
   } finally {
     closeDeleteConfirmation();
   }
+};
+
+// View a specific collection (placeholder function)
+const viewCollection = (collectionId: string) => {
+  alert(`Viewing collection with ID: ${collectionId}`);
 };
 
 // Fetch links and collections on component mount
