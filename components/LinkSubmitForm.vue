@@ -1,11 +1,14 @@
 <template>
-    <form @submit.prevent="handleSubmit" class="form-control">
-      <div class="input-group w-full">
-        <input v-model="url" type="text" placeholder="Paste a link..." class="input input-bordered w-[90%]" />
-        <button type="submit" class="btn btn-primary w-[10%]">Preview</button>
-      </div>
-    </form>
-  
+  <form @submit.prevent="handleSubmit" class="form-control">
+    <div class="input-group w-full">
+      <input v-model="url" type="text" placeholder="Paste a link..." class="input input-bordered w-[90%]" />
+      <button type="submit" class="btn btn-primary w-[10%]" :disabled="loading">
+        {{ loading ? 'Loading...' : 'Preview' }}
+      </button>
+    </div>
+    <!-- Error Message -->
+    <p v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</p>
+  </form>
 
   <div v-if="previewData" class="card bg-base-100 shadow-xl mt-4">
     <div class="card-body grid grid-cols-[auto_1fr_auto] gap-2 items-center">
@@ -17,7 +20,6 @@
       <button @click="saveLink" class="btn btn-primary">Save Link</button>
     </div>
   </div>
-
 </template>
 
 <script setup lang="ts">
@@ -32,6 +34,8 @@ interface PreviewData {
 
 const url = ref<string>('');
 const previewData = ref<PreviewData | null>(null);
+const loading = ref<boolean>(false); // Track loading state
+const error = ref<string | null>(null); // Track error message
 const emit = defineEmits(['link-saved']);
 
 const currentUser = ref<{ _id: string } | null>({
@@ -39,11 +43,31 @@ const currentUser = ref<{ _id: string } | null>({
 });
 
 const handleSubmit = async () => {
-  const response = await $fetch<{ success: boolean; data?: PreviewData }>('/api/links/preview', {
-    method: 'POST',
-    body: { url: url.value },
-  });
-  if (response.success) previewData.value = response.data || null;
+  if (!url.value.trim()) {
+    error.value = 'Please enter a valid URL.';
+    return;
+  }
+
+  loading.value = true; // Disable the button
+  error.value = null; // Clear any previous errors
+
+  try {
+    const response = await $fetch<{ success: boolean; data?: PreviewData }>('/api/links/preview', {
+      method: 'POST',
+      body: { url: url.value },
+    });
+
+    if (response.success && response.data) {
+      previewData.value = response.data;
+    } else {
+      error.value = 'Failed to fetch preview. Please try again.';
+    }
+  } catch (err) {
+    error.value = 'An error occurred while fetching the preview.';
+    console.error(err);
+  } finally {
+    loading.value = false; // Enable the button
+  }
 };
 
 const saveLink = async () => {
@@ -61,7 +85,7 @@ const saveLink = async () => {
     },
   });
   if (response.success && response.link) {
-    alert('Link saved!') 
+    alert('Link saved!');
     emit('link-saved', response.link); // Emit the saved link
     previewData.value = null; // Clear the preview
     url.value = ''; // Reset the input field

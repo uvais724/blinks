@@ -69,32 +69,36 @@
           </option>
         </select>
       </div>
+      <!-- Create New Collection Checkbox -->
       <div class="mb-4">
         <label class="flex items-center gap-2">
           <input type="checkbox" v-model="createNewCollection" />
           <span>Create a New Collection</span>
         </label>
+      </div>
+      <!-- New Collection Fields -->
+      <div v-if="createNewCollection" class="mb-4">
         <input
-          v-if="createNewCollection"
           v-model="newCollectionName"
           type="text"
           placeholder="Enter collection name"
           class="input input-bordered w-full mt-2"
         />
-        <!-- TextArea -->
         <textarea
-          v-if="createNewCollection"
           v-model="newCollectionDescription"
           placeholder="Enter collection description"
           class="textarea textarea-bordered w-full mt-2"
         ></textarea>
+        <!-- Error Message -->
+        <p v-if="errorMessage" class="text-red-500 text-sm mt-2">{{ errorMessage }}</p>
       </div>
+      <!-- Modal Buttons -->
       <div class="flex justify-end gap-4">
         <button @click="closeAddToCollectionPopup" class="btn btn-secondary">Cancel</button>
         <button @click="addToCollection" class="btn btn-primary">Add</button>
       </div>
     </div>
-  </div>
+</div>
 
   <!-- Collections Tab -->
   <CollectionsTab v-if="activeTab === 'collections'" />
@@ -132,6 +136,7 @@ const createNewCollection = ref(false);
 const newCollectionName = ref('');
 const newCollectionDescription = ref(''); // New collection description
 const linkToAdd = ref<string | null>(null);
+const errorMessage = ref<string | null>(null);
 
 // Fetch links when the component is mounted
 const fetchLinks = async () => {
@@ -172,43 +177,59 @@ const addToCollection = async () => {
   if (!linkToAdd.value) return;
 
   try {
-    if (createNewCollection.value && newCollectionName.value) {
+    if (createNewCollection.value) {
+      // Validate new collection fields
+      if (!newCollectionName.value.trim() || !newCollectionDescription.value.trim()) {
+        errorMessage.value = 'Name and description are required.';
+        return; // Prevent closing the popup
+      }
+
       // Create a new collection and add the link
       const response = await fetch('/api/collections/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newCollectionName.value, description: newCollectionDescription.value, linkId: linkToAdd.value }),
+        body: JSON.stringify({
+          name: newCollectionName.value,
+          description: newCollectionDescription.value,
+          linkId: linkToAdd.value,
+        }),
       });
       const result = await response.json();
 
       if (result.success) {
         alert('Link added to new collection successfully!');
         fetchCollections(); // Refresh collections
+        errorMessage.value = null; // Clear error message
+        closeAddToCollectionPopup(); // Close the popup only after success
       } else {
         console.error('Error creating collection:', result.error);
-        alert(result.error);
+        errorMessage.value = result.error || 'Failed to create collection.';
       }
     } else if (selectedCollectionId.value) {
       // Add the link to an existing collection
       const response = await fetch('/api/collections/addToCollection', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ collectionId: selectedCollectionId.value, linkId: linkToAdd.value }),
+        body: JSON.stringify({
+          collectionId: selectedCollectionId.value,
+          linkId: linkToAdd.value,
+        }),
       });
       const result = await response.json();
 
       if (result.success) {
         alert('Link added to collection successfully!');
+        closeAddToCollectionPopup(); // Close the popup only after success
       } else {
         console.error('Error adding link to collection:', result.error);
-        alert(result.error);
+        errorMessage.value = result.error || 'Failed to add link to collection.';
       }
+    } else {
+      errorMessage.value = 'Please select a collection or create a new one.';
     }
   } catch (error) {
     console.error('An error occurred while adding the link to the collection:', error);
-    alert('An error occurred. Please try again.');
-  } finally {
-    closeAddToCollectionPopup();
+    errorMessage.value = 'An error occurred. Please try again.';
   }
 };
 
