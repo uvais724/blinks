@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { isValidUrl } from '~/server/utils/urlValidator'; // Adjust the import path as necessary
 
 interface PreviewData {
   title: string;
@@ -45,6 +46,12 @@ const currentUser = ref<{ _id: string } | null>({
 const handleSubmit = async () => {
   if (!url.value.trim()) {
     error.value = 'Please enter a valid URL.';
+    return;
+  }
+
+  // Validate the URL against allowed domains
+  if (!isValidUrl(url.value)) {
+    error.value = 'The URL must belong to one of the allowed websites: Facebook, Twitter, LinkedIn, Reddit, YouTube, Instagram, or TikTok.';
     return;
   }
 
