@@ -11,13 +11,25 @@
   </form>
 
   <div v-if="previewData" class="card bg-base-100 shadow-xl mt-4">
+    <!-- Delete Icon -->
+    <button
+      @click="cancelPreview"
+      class="absolute top-2 right-2 text-red-500 hover:text-red-700"
+      aria-label="Delete Preview"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
     <div class="card-body grid grid-cols-[auto_1fr_auto] gap-2 items-center">
       <img :src="previewData.thumbnail" alt="Preview" class="w-24 h-24 object-cover rounded-lg" />
       <div>
         <h2 class="card-title">{{ previewData.title }}</h2>
         <p>{{ previewData.description }}</p>
       </div>
-      <button @click="saveLink" class="btn btn-primary">Save Link</button>
+      <div class="flex flex-col items-end gap-2">
+        <button @click="saveLink" class="btn btn-primary w-full">Save Link</button>
+    </div>
     </div>
   </div>
 </template>
@@ -75,6 +87,11 @@ const handleSubmit = async () => {
   } finally {
     loading.value = false; // Enable the button
   }
+};
+
+const cancelPreview = () => {
+  previewData.value = null; // Clear the preview data
+  url.value = ''; // Optionally reset the input field
 };
 
 const saveLink = async () => {

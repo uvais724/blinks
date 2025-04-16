@@ -1,6 +1,6 @@
 export const allowedDomains = [
   'facebook.com',
-  'twitter.com',
+  'x.com',
   'linkedin.com',
   'reddit.com',
   'youtube.com',
