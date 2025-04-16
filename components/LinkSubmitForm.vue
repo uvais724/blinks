@@ -10,28 +10,45 @@
     <p v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</p>
   </form>
 
-  <div v-if="previewData" class="card bg-base-100 shadow-xl mt-4">
-    <!-- Delete Icon -->
-    <button
-      @click="cancelPreview"
-      class="absolute top-2 right-2 text-red-500 hover:text-red-700"
-      aria-label="Delete Preview"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </button>
-    <div class="card-body grid grid-cols-[auto_1fr_auto] gap-2 items-center">
-      <img :src="previewData.thumbnail" alt="Preview" class="w-24 h-24 object-cover rounded-lg" />
-      <div>
-        <h2 class="card-title">{{ previewData.title }}</h2>
-        <p>{{ previewData.description }}</p>
-      </div>
-      <div class="flex flex-col items-end gap-2">
-        <button @click="saveLink" class="btn btn-primary w-full">Save Link</button>
+  <div v-if="previewData" class="card bg-base-100 shadow-xl mt-4 relative">
+  <!-- Delete Icon -->
+  <button
+    @click="cancelPreview"
+    class="absolute top-2 right-2 text-red-500 hover:text-red-700"
+    aria-label="Delete Preview"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </button>
+
+  <div class="card-body grid grid-cols-[auto_1fr_auto] gap-2 items-center">
+    <img :src="previewData.thumbnail" alt="Preview" class="w-24 h-24 object-cover rounded-lg" />
+    <div>
+      <h2 v-if="!isEditing" class="card-title">{{ previewData.title }}</h2>
+      <input
+        v-else
+        v-model="editableTitle"
+        type="text"
+        class="input input-bordered w-full"
+        placeholder="Edit title"
+      />
+      <p v-if="!isEditing">{{ previewData.description }}</p>
+      <textarea
+        v-else
+        v-model="editableDescription"
+        class="textarea textarea-bordered w-full mt-2"
+        placeholder="Edit description"
+      ></textarea>
     </div>
+    <div class="flex flex-col items-end gap-2">
+      <button v-if="!isEditing" @click="startEditing" class="btn btn-secondary w-full">Edit</button>
+      <button v-else @click="saveEdits" class="btn btn-primary w-full">Save</button>
+      <button v-if="isEditing" @click="cancelEditing" class="btn btn-secondary w-full">Cancel</button>
+      <button v-if="!isEditing" @click="saveLink" class="btn btn-primary w-full">Save Link</button>
     </div>
   </div>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -54,6 +71,30 @@ const emit = defineEmits(['link-saved']);
 const currentUser = ref<{ _id: string } | null>({
   _id: '67fa64158139571853da6676', // Use a plain string instead of ObjectId
 });
+
+const isEditing = ref(false); // Track whether the user is editing
+const editableTitle = ref<string>(''); // Editable title
+const editableDescription = ref<string>(''); // Editable description
+
+const startEditing = () => {
+  isEditing.value = true;
+  editableTitle.value = previewData.value?.title || '';
+  editableDescription.value = previewData.value?.description || '';
+};
+
+const saveEdits = () => {
+  if (previewData.value) {
+    previewData.value.title = editableTitle.value;
+    previewData.value.description = editableDescription.value;
+  }
+  isEditing.value = false;
+};
+
+const cancelEditing = () => {
+  isEditing.value = false;
+  editableTitle.value = previewData.value?.title || '';
+  editableDescription.value = previewData.value?.description || '';
+};
 
 const handleSubmit = async () => {
   if (!url.value.trim()) {
