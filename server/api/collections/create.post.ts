@@ -6,18 +6,12 @@ import { ref } from 'vue';
 export default defineEventHandler(async (event) => {
   await connectToDatabase();
 
-  const userId = ref<{ _id: string } | null>({
-    _id: '67fa64158139571853da6676', // Use a plain string instead of ObjectId
-  });
+  const session = getSession(event);
+  const userId = typeof session !== 'string' && session.id ? session.id : null;
 
-  // const userId = event.context.auth?.userId; // Replace with your authentication logic
-
-  // if (!userId) {
-  //   return {
-  //     success: false,
-  //     error: 'User not authenticated.',
-  //   };
-  // }
+  if (!userId) {
+    throw new Error('Invalid session: user ID not found');
+  }
 
   const { name, description, linkId } = await readBody(event);
 
@@ -32,7 +26,7 @@ export default defineEventHandler(async (event) => {
     const newCollection = new Collection({
       title: name,
       description: description,
-      createdBy: userId.value?._id, // Use the userId from authentication
+      createdBy: userId,
       links: linkId ? [linkId] : [],
     });
 

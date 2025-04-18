@@ -6,21 +6,15 @@ import { connectToDatabase } from '~/server/utils/db';
 export default defineEventHandler(async (event) => {
   await connectToDatabase();
 
-  const userId = ref<{ _id: string } | null>({
-    _id: '67fa64158139571853da6676', // Use a plain string instead of ObjectId
-  });
+  const session = getSession(event);
+  const userId = typeof session !== 'string' && session.id ? session.id : null;
 
-  // const userId = event.context.auth?.userId; // Replace with your authentication logic
-
-  // if (!userId) {
-  //   return {
-  //     success: false,
-  //     error: 'User not authenticated.',
-  //   };
-  // }
+  if (!userId) {
+    throw new Error('Invalid session: user ID not found');
+  }
 
   try {
-    const collections = await Collection.find({ createdBy: userId.value?._id }).select('_id title description coverImage links').populate('links').sort({ createdAt: -1 });
+    const collections = await Collection.find({ createdBy: userId }).select('_id title description coverImage links').populate('links').sort({ createdAt: -1 });
     return {
       success: true,
       collections,

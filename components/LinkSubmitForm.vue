@@ -68,9 +68,13 @@ const loading = ref<boolean>(false); // Track loading state
 const error = ref<string | null>(null); // Track error message
 const emit = defineEmits(['link-saved']);
 
-const currentUser = ref<{ _id: string } | null>({
-  _id: '67fa64158139571853da6676', // Use a plain string instead of ObjectId
-});
+const { session } = useUserSession()
+console.log('User:', session); // Debugging log
+const userId = session.value?.userId; // Get the user ID from the session
+
+if (!userId) {
+  throw new Error('Invalid session: user ID not found');
+}
 
 const isEditing = ref(false); // Track whether the user is editing
 const editableTitle = ref<string>(''); // Editable title
@@ -136,11 +140,6 @@ const cancelPreview = () => {
 };
 
 const saveLink = async () => {
-  if (!currentUser.value) {
-    console.error('currentUser is null');
-    return;
-  }
-
   try {
     // Check if the link already exists in the database
     const checkResponse = await $fetch<{ success: boolean; exists: boolean }>('/api/links/check', {
@@ -162,7 +161,7 @@ const saveLink = async () => {
       body: {
         url: url.value,
         ...previewData.value,
-        createdBy: currentUser.value._id, // Replace with auth user ID
+        createdBy: userId,
       },
     });
 

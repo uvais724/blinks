@@ -1,25 +1,24 @@
 import { defineEventHandler } from 'h3';
-import User from '../models/User'; // Ensure User model is imported correctly
+import { getSession } from '~/server/utils/session';
 import Link from '../models/Links';
-import { connectToDatabase } from '../utils/db'; // Ensure database connection is established
-import mongoose from 'mongoose'; // Import mongoose
+import { connectToDatabase } from '../utils/db';
 
-interface LinkResponse {
-  success: boolean;
-  links?: any[];
-  error?: string;
-}
-
-export default defineEventHandler(async (event): Promise<LinkResponse> => {
+export default defineEventHandler(async (event) => {
   try {
     await connectToDatabase(); // Ensure MongoDB connection is established
 
-    // Explicitly reference the User model to ensure it is registered
-    User
-    // Fetch links, sorted by newest first, and populate the 'createdBy' field
-    const links = await Link.find()
+    // Retrieve the logged-in user's session
+    const session = getSession(event);
+    const userId = typeof session !== 'string' && session.id ? session.id : null;
+
+    if (!userId) {
+      throw new Error('Invalid session: user ID not found');
+    }
+
+    // Fetch links created by the logged-in user
+    const links = await Link.find({ createdBy: userId })
       .sort({ createdAt: -1 })
-      .populate('createdBy', 'username avatarUrl'); // Populate 'username' and 'avatarUrl' from User
+      .populate('createdBy', 'username avatarUrl');
 
     return { success: true, links };
   } catch (error: any) {
