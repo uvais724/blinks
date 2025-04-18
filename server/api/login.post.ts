@@ -25,8 +25,7 @@ export default defineEventHandler(async (event) => {
         }
     
         // Validate the password
-        //const isPasswordValid = await bcrypt.compare(password, user.password);
-        const isPasswordValid = password == user.password;
+        const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
           throw createError({
