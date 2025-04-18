@@ -12,16 +12,19 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.2",
     "@vueuse/core": "^13.0.0",
+    "bcrypt": "^5.1.1",
     "daisyui": "^5.0.12",
     "mongodb": "^6.15.0",
     "mongoose": "^8.13.2",
     "nuxt": "^3.16.2",
+    "nuxt-auth-utils": "^0.5.20",
     "open-graph-scraper": "^6.9.0",
     "tailwindcss": "^4.1.2",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/node": "^22.14.0"
   }
 }

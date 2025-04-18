@@ -1,5 +1,9 @@
 <template>
   <h1 class="text-3xl font-bold text-center my-4">Welcome to the Link Sharing App</h1>
+  <!-- <div class="absolute top-4 right-4">
+    <button @click="logout" class="btn btn-secondary">Logout</button>
+  </div> -->
+
   <LinkSubmitForm @link-saved="addNewLink" />
 
   <!-- Tabs -->
@@ -100,6 +104,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useFetch } from '@vueuse/core';
+
+definePageMeta({
+  middleware: ['authenticated'],
+})
 
 interface Link {
   _id: string;
