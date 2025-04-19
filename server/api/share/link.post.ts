@@ -2,15 +2,15 @@ import Share from '~/server/models/Share';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-  const { linkId, userIds } = body;
+  const { itemId, userIds } = body;
 
-  if (!linkId || !userIds || !Array.isArray(userIds)) {
+  if (!itemId || !userIds || !Array.isArray(userIds)) {
     return { success: false, error: 'Link ID and User IDs are required' };
   }
 
   try {
     const shares = userIds.map((userId) => ({
-      itemId: linkId,
+      itemId: itemId,
       userId,
       type: 'link',
     }));
