@@ -4,7 +4,6 @@ import Collection from '~/server/models/Collection';
 import { connectToDatabase } from '~/server/utils/db';
 
 export default defineEventHandler(async (event) => {
-  await connectToDatabase();
 
   const session = getSession(event);
   const userId = typeof session !== 'string' && session.id ? session.id : null;
@@ -22,11 +21,12 @@ export default defineEventHandler(async (event) => {
     };
   }
 
-  console.log('userId', userId.value?._id);
+  console.log('userId', userId);
   console.log('collectionId', collectionId);
 
   try {
-    const collection = await Collection.findOne({ _id: collectionId, createdBy: userId.value?._id });
+    await connectToDatabase();
+    const collection = await Collection.findOne({ _id: collectionId, createdBy: userId });
     console.log('collection to be saved', collection);
 
     if (!collection) {

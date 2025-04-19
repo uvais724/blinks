@@ -76,6 +76,8 @@
             <input type="checkbox" v-model="createNewCollection" />
             <span>Create a New Collection</span>
           </label>
+          <!-- Error Message -->
+          <p v-if="errorMessage" class="text-red-500 text-sm mt-2">{{ errorMessage }}</p>
         </div>
         <!-- New Collection Fields -->
         <div v-if="createNewCollection" class="mb-4">
@@ -83,8 +85,6 @@
             class="input input-bordered w-full mt-2" />
           <textarea v-model="newCollectionDescription" placeholder="Enter collection description"
             class="textarea textarea-bordered w-full mt-2"></textarea>
-          <!-- Error Message -->
-          <p v-if="errorMessage" class="text-red-500 text-sm mt-2">{{ errorMessage }}</p>
         </div>
         <!-- Modal Buttons -->
         <div class="flex justify-end gap-4">
@@ -181,6 +181,7 @@ const closeAddToCollectionPopup = () => {
   newCollectionName.value = '';
   newCollectionDescription.value = '';
   showAddToCollectionModal.value = false;
+  errorMessage.value = null;
 };
 
 // Add the link to the collection
@@ -217,6 +218,17 @@ const addToCollection = async () => {
         errorMessage.value = result.error || 'Failed to create collection.';
       }
     } else if (selectedCollectionId.value) {
+      // Check if the link is already in the selected collection
+      const selectedCollection = collections.value.find(
+        (collection) => collection._id === selectedCollectionId.value
+      );
+
+      if (selectedCollection && selectedCollection.links.some((link) => link._id === linkToAdd.value)) {
+        console.warn('Link already exists in the selected collection.');
+        errorMessage.value = 'This link is already in the selected collection.';
+        return; // Prevent adding the link again
+      }
+
       // Add the link to an existing collection
       const response = await fetch('/api/collections/addToCollection', {
         method: 'POST',
