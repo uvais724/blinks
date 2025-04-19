@@ -1,6 +1,8 @@
 import Share from '~/server/models/Share';
 
 export default defineEventHandler(async (event) => {
+  const session = getSession(event);
+  const loggedInUserId = typeof session !== 'string' && session.id ? session.id : null;
   const body = await readBody(event);
   const { itemId, userIds } = body;
 
@@ -15,6 +17,7 @@ export default defineEventHandler(async (event) => {
       itemId: itemId,
       userId,
       type: 'Collection',
+      createdBy: loggedInUserId
     }));
 
     await Share.insertMany(shares);

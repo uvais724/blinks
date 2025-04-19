@@ -110,7 +110,7 @@
   const shareItem = async () => {
     if (!itemToShare.value || selectedUsers.value.length === 0) return;
   
-    const endpoint = props.type === 'Link' ? '/api/share/link' : '/api/share/collection';
+    const endpoint = props.type === 'Link' ? '/api/shared/link' : '/api/shared/collection';
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

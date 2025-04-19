@@ -1,6 +1,12 @@
 <template>
   <div class="grid grid-cols-1 gap-4">
     <div v-for="(item, index) in sharedItems" :key="item._id" class="relative bg-base-100 shadow-xl p-4 rounded-lg">
+
+      <!-- Shared By -->
+      <div class="absolute top-2 left-4 text-sm text-gray-500">
+        Shared By: <span class="font-semibold">{{ item.sharedBy?.username }}</span>
+      </div>
+
       <!-- Delete Button -->
       <button @click="openDeleteConfirmation(item._id)" class="absolute top-4 right-4 text-red-500 hover:text-red-700"
         aria-label="Delete Shared Item">
@@ -68,6 +74,11 @@
 import { ref, onMounted } from 'vue';
 import { useFetch } from '@vueuse/core';
 
+interface User {
+  _id: string;
+  username: string;
+}
+
 interface Link {
   _id: string;
   title: string;
@@ -91,12 +102,14 @@ type SharedItem =
     thumbnail: string;
     url: string;
     type: 'link';
+    sharedBy: User;
   }
   | {
     _id: string;
     title: string;
     links: Link[];
     type: 'collection';
+    sharedBy: User;
   };
 
 const sharedItems = ref<SharedItem[]>([]);
@@ -107,12 +120,11 @@ const itemToDelete = ref<string | null>(null);
 // Fetch shared items when the component is mounted
 const fetchSharedItems = async () => {
   const { data } = await useFetch<{ success: boolean; sharedItems?: any[] }>('/api/shared').json();
+  console.log('Fetched shared items:', data.value);
   if (data.value?.success && data.value.sharedItems) {
-    console.log('Fetched shared items:', data.value.sharedItems);
     // Normalize the shared items
     const normalizedItems = await Promise.all(
-      data.value.sharedItems.map(async (item: { _id: string; type: string; itemId: any }) => {
-        console.log('Processing item:', item._id);
+      data.value.sharedItems.map(async (item: { _id: string; type: string; itemId: any; createdBy: string }) => {
         if (item.type === 'Link') {
           return {
             _id: item._id,
@@ -122,6 +134,7 @@ const fetchSharedItems = async () => {
             thumbnail: item.itemId.thumbnail,
             url: item.itemId.url,
             type: 'link',
+            sharedBy: item.createdBy,
           };
         } else if (item.type === 'Collection') {
           // Fetch full link details for the collection
@@ -133,13 +146,13 @@ const fetchSharedItems = async () => {
           });
           const result = await response.json();
           const links = result.success ? result.links : [];
-
           return {
             _id: item._id,
             collection_id: item.itemId._id,
             title: item.itemId.title,
             links,
             type: 'collection',
+            sharedBy: item.createdBy,
           };
         }
       })

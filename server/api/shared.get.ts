@@ -17,7 +17,8 @@ export default defineEventHandler(async (event) => {
 
     const sharedItems = await Share.find({ userId })
       .populate('itemId') // Dynamically populate either Link or Collection
-      .populate('userId', 'username'); // Populate the user details
+      .populate('userId', 'username') // Populate the user details
+      .populate('createdBy', 'username'); // Populate the creator details
 
     return { success: true, sharedItems };
   } catch (error) {
