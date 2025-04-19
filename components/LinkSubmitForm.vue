@@ -69,7 +69,6 @@ const error = ref<string | null>(null); // Track error message
 const emit = defineEmits(['link-saved']);
 
 const { session } = useUserSession()
-console.log('User:', session); // Debugging log
 const userId = session.value?.userId; // Get the user ID from the session
 
 if (!userId) {

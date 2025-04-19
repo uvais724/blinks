@@ -37,6 +37,9 @@
           Add to Collection
         </button>
 
+        <!-- Share Link Component -->
+        <ShareLink :link-id="link._id" type="link" />
+        
         <!-- Open Button -->
         <a :href="link.url" target="_blank" class="btn btn-primary">Open</a>
       </div>
@@ -100,6 +103,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useFetch } from '@vueuse/core';
+import ShareLink from '~/components/ShareLink.vue';
 
 definePageMeta({
   middleware: ['authenticated'],
