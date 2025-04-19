@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
     const shares = userIds.map((userId) => ({
       itemId: itemId,
       userId,
-      type: 'collection',
+      type: 'Collection',
     }));
 
     await Share.insertMany(shares);

@@ -2,6 +2,7 @@ import Share from '~/server/models/Share';
 import Link from '~/server/models/Links';
 import Collection from '~/server/models/Collection';
 import { getSession } from '~/server/utils/session';
+import { connect } from 'http2';
 
 export default defineEventHandler(async (event) => {
   try {
@@ -12,14 +13,13 @@ export default defineEventHandler(async (event) => {
       return { success: false, error: 'Unauthorized' };
     }
 
-    connectToDatabase();
+    connectToDatabase(); // Ensure the database connection is established
 
-    const sharedItems = await Share.find({ userId });
+    const sharedItems = await Share.find({ userId })
+      .populate('itemId') // Dynamically populate either Link or Collection
+      .populate('userId', 'username'); // Populate the user details
 
-    const links = await Link.find({ _id: { $in: sharedItems.filter((item) => item.type === 'link').map((item) => item.itemId) } });
-    const collections = await Collection.find({ _id: { $in: sharedItems.filter((item) => item.type === 'collection').map((item) => item.itemId) } });
-
-    return { success: true, sharedItems: [...links, ...collections] };
+    return { success: true, sharedItems };
   } catch (error) {
     console.error('Error fetching shared items:', error);
     return { success: false, error: 'Failed to fetch shared items' };

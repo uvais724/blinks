@@ -6,7 +6,7 @@
       <!-- Share Popup -->
       <div v-if="showSharePopup" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-          <h2 class="text-lg font-bold mb-4">Share {{ type === 'link' ? 'Link' : 'Collection' }}</h2>
+          <h2 class="text-lg font-bold mb-4">Share {{ type === 'Link' ? 'Link' : 'Collection' }}</h2>
           <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700">Select User</label>
             <input
@@ -62,7 +62,7 @@
     username: string;
   }
   
-  const props = defineProps<{ linkId: string; type: 'link' | 'collection' }>();
+  const props = defineProps<{ linkId: string; type: 'Link' | 'Collection' }>();
   
   const showSharePopup = ref(false);
   const searchQuery = ref('');
@@ -110,7 +110,7 @@
   const shareItem = async () => {
     if (!itemToShare.value || selectedUsers.value.length === 0) return;
   
-    const endpoint = props.type === 'link' ? '/api/share/link' : '/api/share/collection';
+    const endpoint = props.type === 'Link' ? '/api/share/link' : '/api/share/collection';
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -122,7 +122,7 @@
   
     const result = await response.json();
     if (result.success) {
-      alert(`${props.type === 'link' ? 'Link' : 'Collection'} shared successfully!`);
+      alert(`${props.type === 'Link' ? 'Link' : 'Collection'} shared successfully!`);
       closeSharePopup();
     } else {
       alert(`Failed to share the ${props.type}. Please try again.`);

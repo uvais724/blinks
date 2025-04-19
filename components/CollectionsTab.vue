@@ -13,7 +13,7 @@
         </div>
         
         <!-- Share Collection Button -->
-        <ShareLink :link-id="collection._id" type="collection" class="mr-4" />
+        <ShareLink :link-id="collection._id" type="Collection" class="mr-4" />
         
         <!-- Toggle View Button -->
         <button

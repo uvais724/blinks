@@ -7,8 +7,8 @@
     <!-- Tabs -->
     <div class="tabs tabs-boxed mb-4">
       <a class="tab" :class="{ 'tab-active': activeTab === 'saved' }" @click="activeTab = 'saved'">Saved</a>
-      <a class="tab" :class="{ 'tab-active': activeTab === 'collections' }"
-        @click="activeTab = 'collections'">Collections</a>
+      <a class="tab" :class="{ 'tab-active': activeTab === 'collections' }" @click="activeTab = 'collections'">Collections</a>
+      <a class="tab" :class="{ 'tab-active': activeTab === 'shared' }" @click="activeTab = 'shared'">Shared</a>
     </div>
 
     <div v-if="activeTab === 'saved'" class="grid grid-cols-1 gap-4">
@@ -38,7 +38,7 @@
         </button>
 
         <!-- Share Link Component -->
-        <ShareLink :link-id="link._id" type="link" />
+        <ShareLink :link-id="link._id" type="Link" />
         
         <!-- Open Button -->
         <a :href="link.url" target="_blank" class="btn btn-primary">Open</a>
@@ -96,6 +96,9 @@
 
     <!-- Collections Tab -->
     <CollectionsTab v-if="activeTab === 'collections'" />
+
+     <!-- Shared Tab -->
+     <SharedTab v-if="activeTab === 'shared'" />
   </div>
 
 </template>
@@ -104,6 +107,8 @@
 import { ref, onMounted } from 'vue';
 import { useFetch } from '@vueuse/core';
 import ShareLink from '~/components/ShareLink.vue';
+import CollectionsTab from '~/components/CollectionsTab.vue';
+import SharedTab from '~/components/SharedTab.vue';
 
 definePageMeta({
   middleware: ['authenticated'],
