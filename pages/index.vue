@@ -31,10 +31,6 @@
           <p class="text-sm text-gray-600">
             {{ truncatedDescription(link.description) }}
           </p>
-          <div class="flex items-center gap-2 mt-2">
-            <img :src="link.createdBy.avatarUrl" class="w-6 h-6 rounded-full" />
-            <span class="text-sm text-gray-500">@{{ link.createdBy.username }}</span>
-          </div>
         </div>
         <!-- Add to collection Button -->
         <button class="btn btn-secondary" @click="openAddToCollectionPopup(link._id)">
@@ -115,10 +111,6 @@ interface Link {
   title: string;
   description: string;
   thumbnail: string;
-  createdBy: {
-    username: string;
-    avatarUrl: string;
-  };
 }
 
 interface Collection {
