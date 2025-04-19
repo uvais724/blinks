@@ -169,6 +169,7 @@ const fetchCollections = async () => {
 
 // Open the Add to Collection popup
 const openAddToCollectionPopup = (linkId: string) => {
+  fetchCollections();
   linkToAdd.value = linkId;
   showAddToCollectionModal.value = true;
 };
