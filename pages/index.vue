@@ -13,7 +13,7 @@
 
     <div v-if="activeTab === 'saved'" class="grid grid-cols-1 gap-4">
       <div v-for="link in links" :key="link._id"
-        class="relative flex flex-col sm:flex-row items-start sm:items-center justify-between mt-8 gap-4">
+        class="relative bg-base-100 shadow-xl p-4 rounded-lg">
         <!-- Delete Button -->
         <button @click="openDeleteConfirmation(link._id)" class="absolute top-2 right-2 text-red-500 hover:text-red-700"
           aria-label="Delete Link">
@@ -23,7 +23,8 @@
               d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m-7 0a2 2 0 012-2h4a2 2 0 012 2m-6 0v0" />
           </svg>
         </button>
-        <!-- Thumbnail -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-8 gap-4">
+          <!-- Thumbnail -->
         <img :src="link.thumbnail" alt="Thumbnail" class="w-16 h-16 object-cover rounded-lg" />
         <!-- Link Details -->
         <div class="flex-1 min-w-0">
@@ -44,6 +45,7 @@
   
         <!-- Open Button -->
         <a :href="link.url" target="_blank" class="btn btn-primary w-full sm:w-auto">Open</a>
+        </div>
       </div>
     </div>
 
