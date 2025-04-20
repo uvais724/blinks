@@ -21,14 +21,9 @@ export default defineEventHandler(async (event) => {
     };
   }
 
-  console.log('userId', userId);
-  console.log('collectionId', collectionId);
-
   try {
     await connectToDatabase();
     const collection = await Collection.findOne({ _id: collectionId, createdBy: userId });
-    console.log('collection to be saved', collection);
-
     if (!collection) {
       return {
         success: false,

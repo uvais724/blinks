@@ -5,7 +5,7 @@
       <input
         v-model="url"
         type="text"
-        placeholder="Paste a link..."
+        placeholder="https://example.com"
         class="input input-bordered flex-1"
       />
       <button

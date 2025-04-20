@@ -1,6 +1,9 @@
 <template>
   <div class="container mx-auto px-4">
-    <h1 class="text-3xl font-bold text-center my-4">Welcome to the Link Sharing App</h1>
+    <!-- <h2 class="text-3xl font-bold text-left my-4">Paste a link from any of Facebook, Twitter, LinkedIn, Reddit, YouTube, Instagram, or TikTok below</h2> -->
+    <h2 class="text-3xl font-bold text-center my-6 text-primary">
+      Welcome to Blinks! Paste a link from social media platforms
+    </h2>
 
     <LinkSubmitForm @link-saved="addNewLink" />
 
