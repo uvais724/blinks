@@ -8,11 +8,23 @@ async function logout() {
 }
 </script>
 
+<style>
+.logo {
+  height: 64px; /* Increase the height */
+  width: auto; /* Maintain aspect ratio */
+  border-radius: 8px; /* Add curved edges */
+}
+</style>
+
 <template>
   <nav class="navbar bg-base-100 shadow-md">
     <!-- Logo Placeholder -->
     <div class="flex-1">
-      <a href="/" class="text-xl font-bold">Logo</a>
+      <!-- <a href="/" class="text-xl font-bold">Logo</a> -->
+      <a href="/" class="flex items-center gap-2">
+        <img src="../public/assets/images/blinks-logo.png" alt="Blinks Logo" class="logo" />
+        <span class="text-xl font-bold">Blinks</span>
+      </a>
     </div>
 
     <!-- Right Side -->

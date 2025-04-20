@@ -9,6 +9,6 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
 
-  css: ["public/assets/app.css"],
+  css: ["public/assets/css/app.css"],
   modules: ["nuxt-auth-utils"],
 })
