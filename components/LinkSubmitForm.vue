@@ -1,8 +1,18 @@
 <template>
-  <form @submit.prevent="handleSubmit" class="form-control">
-    <div class="input-group w-full">
-      <input v-model="url" type="text" placeholder="Paste a link..." class="input input-bordered w-[90%]" />
-      <button type="submit" class="btn btn-primary w-[10%]" :disabled="loading">
+  <!-- Form Section -->
+  <form @submit.prevent="handleSubmit" class="form-control w-full">
+    <div class="flex items-center gap-2 w-full">
+      <input
+        v-model="url"
+        type="text"
+        placeholder="Paste a link..."
+        class="input input-bordered flex-1"
+      />
+      <button
+        type="submit"
+        class="btn btn-primary"
+        :disabled="loading"
+      >
         {{ loading ? 'Loading...' : 'Preview' }}
       </button>
     </div>
@@ -10,45 +20,101 @@
     <p v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</p>
   </form>
 
-  <div v-if="previewData" class="card bg-base-100 shadow-xl mt-4 relative">
-  <!-- Delete Icon -->
-  <button
-    @click="cancelPreview"
-    class="absolute top-2 right-2 text-red-500 hover:text-red-700"
-    aria-label="Delete Preview"
+  <!-- Preview Section -->
+  <div
+    v-if="previewData"
+    class="card bg-base-100 shadow-xl mt-4 relative"
   >
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-  </button>
+    <!-- Delete Icon -->
+    <button
+      @click="cancelPreview"
+      class="absolute top-2 right-2 text-red-500 hover:text-red-700"
+      aria-label="Delete Preview"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    </button>
 
-  <div class="card-body grid grid-cols-[auto_1fr_auto] gap-2 items-center">
-    <img :src="previewData.thumbnail" alt="Preview" class="w-24 h-24 object-cover rounded-lg" />
-    <div>
-      <h2 v-if="!isEditing" class="card-title">{{ previewData.title }}</h2>
-      <input
-        v-else
-        v-model="editableTitle"
-        type="text"
-        class="input input-bordered w-full"
-        placeholder="Edit title"
+    <!-- Card Body -->
+    <div
+      class="card-body grid grid-cols-1 md:grid-cols-[auto_1fr_auto] gap-4 items-center"
+    >
+      <!-- Thumbnail -->
+      <img
+        :src="previewData.thumbnail"
+        alt="Preview"
+        class="w-full md:w-24 h-24 object-cover rounded-lg"
       />
-      <p v-if="!isEditing">{{ previewData.description }}</p>
-      <textarea
-        v-else
-        v-model="editableDescription"
-        class="textarea textarea-bordered w-full mt-2"
-        placeholder="Edit description"
-      ></textarea>
-    </div>
-    <div class="flex flex-col items-end gap-2">
-      <button v-if="!isEditing" @click="startEditing" class="btn btn-secondary w-full">Edit</button>
-      <button v-else @click="saveEdits" class="btn btn-primary w-full">Save</button>
-      <button v-if="isEditing" @click="cancelEditing" class="btn btn-secondary w-full">Cancel</button>
-      <button v-if="!isEditing" @click="saveLink" class="btn btn-primary w-full">Save Link</button>
+      <!-- Details -->
+      <div>
+        <h2
+          v-if="!isEditing"
+          class="card-title text-lg font-bold truncate"
+        >
+          {{ previewData.title }}
+        </h2>
+        <input
+          v-else
+          v-model="editableTitle"
+          type="text"
+          class="input input-bordered w-full"
+          placeholder="Edit title"
+        />
+        <p v-if="!isEditing" class="text-sm text-gray-600">
+          {{ previewData.description }}
+        </p>
+        <textarea
+          v-else
+          v-model="editableDescription"
+          class="textarea textarea-bordered w-full mt-2"
+          placeholder="Edit description"
+        ></textarea>
+      </div>
+      <!-- Buttons -->
+      <div class="flex flex-col items-end gap-2">
+        <button
+          v-if="!isEditing"
+          @click="startEditing"
+          class="btn btn-secondary w-full"
+        >
+          Edit
+        </button>
+        <button
+          v-else
+          @click="saveEdits"
+          class="btn btn-primary w-full"
+        >
+          Save
+        </button>
+        <button
+          v-if="isEditing"
+          @click="cancelEditing"
+          class="btn btn-secondary w-full"
+        >
+          Cancel
+        </button>
+        <button
+          v-if="!isEditing"
+          @click="saveLink"
+          class="btn btn-primary w-full"
+        >
+          Save Link
+        </button>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script setup lang="ts">

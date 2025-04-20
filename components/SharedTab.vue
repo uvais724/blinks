@@ -18,18 +18,20 @@
       </button>
 
       <!-- Shared Item Details -->
-      <div class="flex items-center justify-between mt-8">
-        <div class="flex-1">
-          <h2 class="font-bold text-lg">{{ item.title }}</h2>
-          <p class="text-sm text-gray-600 truncate">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-8 gap-4">
+        <div class="flex-1 min-w-0">
+          <h2 class="font-bold text-lg truncate whitespace-normal">
+            {{ item.title }}
+          </h2>
+          <p class="text-sm text-gray-600 break-words whitespace-normal">
             {{ item.type === 'link' ? item.description : `${item.links.length} links` }}
           </p>
         </div>
         <!-- Open Button -->
-        <a v-if="item.type === 'link'" :href="item.url" target="_blank" class="btn btn-primary">
+        <a v-if="item.type === 'link'" :href="item.url" target="_blank" class="btn btn-primary w-full sm:w-auto">
           Open Link
         </a>
-        <button v-else class="btn btn-secondary" @click="toggleCollection(index)">
+        <button v-else class="btn btn-secondary w-full sm:w-auto" @click="toggleCollection(index)">
           {{ activeCollectionIndex === index ? 'Hide Links' : 'View Links' }}
         </button>
       </div>
@@ -39,16 +41,16 @@
         <div v-if="activeCollectionIndex === index && item.type === 'collection'"
           class="mt-4 bg-gray-100 p-4 rounded-lg">
           <div v-for="link in item.links" :key="link._id"
-            class="flex items-center gap-4 mb-4 bg-white shadow p-4 rounded-lg">
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-8 gap-4">
             <!-- Thumbnail -->
             <img :src="link.thumbnail" alt="Thumbnail" class="w-16 h-16 object-cover rounded-lg" />
             <!-- Link Details -->
-            <div class="flex-1">
-              <h3 class="font-bold text-md">{{ link.title }}</h3>
-              <p class="text-sm text-gray-600 truncate">{{ link.description }}</p>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-bold text-lg truncate whitespace-normal">{{ link.title }}</h3>
+              <p class="text-sm text-gray-600 break-words whitespace-normal">{{ link.description }}</p>
             </div>
             <!-- Open Link Button -->
-            <a :href="link.url" target="_blank" class="btn btn-primary ml-auto">
+            <a :href="link.url" target="_blank" class="btn btn-primary w-full sm:w-auto">
               Open Link
             </a>
           </div>

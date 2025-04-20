@@ -1,7 +1,7 @@
 <template>
     <div>
       <!-- Share Button -->
-      <button class="btn btn-accent" @click="openSharePopup">Share</button>
+      <button class="btn btn-accent w-full sm:w-auto" @click="openSharePopup">Share</button>
   
       <!-- Share Popup -->
       <div v-if="showSharePopup" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
