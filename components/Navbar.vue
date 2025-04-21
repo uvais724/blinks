@@ -23,7 +23,7 @@ async function logout() {
       <!-- <a href="/" class="text-xl font-bold">Logo</a> -->
       <a href="/" class="flex items-center gap-2">
         <img src="../public/assets/images/blinks-logo.png" alt="Blinks Logo" class="logo" />
-        <span class="text-xl text-primary font-bold ml-[-10px]">Blinks</span>
+        <span class="text-xl text-primary font-bold ml-[-18px]">Blinks</span>
       </a>
     </div>
 

@@ -1,6 +1,13 @@
-# Nuxt Minimal Starter
+# Blinks
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Blinks is a Nuxt-based application for managing and sharing collections of links. This project includes user authentication, link submission, and sharing features.
+
+## Features
+
+- User registration and authentication
+- Link submission and sharing
+- Organized collections of links
+- Responsive design
 
 ## Setup
 
@@ -72,4 +79,10 @@ yarn preview
 bun run preview
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Deployment
+
+Check out the [Nuxt deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## License
+
+This project is licensed under the MIT License.
