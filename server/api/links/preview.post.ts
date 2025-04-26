@@ -24,7 +24,7 @@ export default defineEventHandler(async (event): Promise<PreviewResponse> => {
       data: {
         title: result.title || 'No title',
         description: result.description || '',
-        thumbnail: result.tool == 'open-graph-scraper' ? result.image?.[0] || result.image || '' : result.image || '',
+        thumbnail: result.image || '',
         domain: new URL(url).hostname,
       },
     };
