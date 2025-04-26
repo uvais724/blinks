@@ -2,10 +2,19 @@
 
 const { session, clear: clearSession } = useUserSession()
 
+const isIndexLoaded = ref(false);
+
 async function logout() {
   await clearSession()
   await navigateTo('/login')
 }
+
+onMounted(() => {
+  // Listen for the 'index-loaded' event
+  window.addEventListener('index-loaded', () => {
+    isIndexLoaded.value = true;
+  });
+});
 </script>
 
 <style>
@@ -29,7 +38,7 @@ async function logout() {
 
     <!-- Right Side -->
     <div class="flex-none">
-      <div v-if="session?.loggedIn" class="flex items-center gap-2">
+      <div v-if="session?.loggedIn && isIndexLoaded" class="flex items-center gap-2">
         <span class="text-sm">Welcome, {{ session?.username || 'User' }}</span>
         <button @click="logout" class="btn btn-secondary">Logout</button>
       </div>

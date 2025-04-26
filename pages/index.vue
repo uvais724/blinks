@@ -342,5 +342,6 @@ const deleteCollection = async (collectionId: string) => {
 onMounted(() => {
   fetchLinks();
   fetchCollections();
+  window.dispatchEvent(new Event('index-loaded'));
 });
 </script>
