@@ -46,6 +46,7 @@ export default defineEventHandler(async (event) => {
 
     // Create a session token (JWT)
     const secret = process.env.JWT_SECRET || 'your-secret-key';
+    console.log('JWT Secret:', secret); // Log the secret for debugging
     const token = jwt.sign(
       {
         id: user._id,
