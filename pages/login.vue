@@ -7,7 +7,7 @@ const showRegistrationForm = ref(false); // Controls whether to show the registr
 const errorMessage = ref(''); // Holds the error message to display
 const showPassword = ref(false); // Controls the visibility of the password fields
 // Password validation regex
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_])[A-Za-z\d@$!%*?&_]{6,}$/;
 
 // Login form state
 const loginCredentials = reactive({
