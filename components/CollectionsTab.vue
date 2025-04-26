@@ -1,18 +1,17 @@
 <template>
   <div class="grid grid-cols-1 gap-4">
-    <div
-      v-for="(collection, index) in collections"
-      :key="collection._id"
-      class="relative bg-base-100 shadow-xl p-4 rounded-lg"
-    >
+    <div v-if="collections.length === 0" class="flex flex-col items-center justify-center h-screen pb-100">
+      <p class="text-gray-600 text-3xl">No collections saved</p>
+    </div>
+    <div v-else v-for="(collection, index) in collections" :key="collection._id"
+      class="relative bg-base-100 shadow-xl p-4 rounded-lg">
       <!-- Delete Collection Button -->
-      <button
-        @click="openDeleteConfirmation(collection._id, 'collection')"
-        class="absolute top-2 right-2 text-red-500 hover:text-red-700"
-        aria-label="Delete Collection"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m-7 0a2 2 0 012-2h4a2 2 0 012 2m-6 0v0" />
+      <button @click="openDeleteConfirmation(collection._id, 'collection')"
+        class="absolute top-2 right-2 text-red-500 hover:text-red-700" aria-label="Delete Collection">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+          stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m-7 0a2 2 0 012-2h4a2 2 0 012 2m-6 0v0" />
         </svg>
       </button>
 
@@ -36,18 +35,13 @@
       <!-- Links Drawer -->
       <transition name="slide">
         <div v-if="activeCollectionIndex === index" class="mt-4 bg-gray-100 p-4 rounded-lg">
-          <div
-            v-for="link in collection.links"
-            :key="link._id"
-            class="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-8 gap-4"
-          >
+          <div v-for="link in collection.links" :key="link._id"
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-8 gap-4">
             <!-- Link Delete Button -->
-            <button
-              @click="openDeleteConfirmation(link._id, 'link')"
-              class="text-red-500 hover:text-red-700"
-              aria-label="Delete Link"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <button @click="openDeleteConfirmation(link._id, 'link')" class="text-red-500 hover:text-red-700"
+              aria-label="Delete Link">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -154,11 +148,11 @@ const confirmDelete = async () => {
       deleteType.value === 'collection'
         ? null
         : JSON.stringify({
-            collectionId: collections.value.find((collection) =>
-              collection.links.some((link) => link._id === itemToDelete.value)
-            )?._id,
-            linkId: itemToDelete.value,
-          });
+          collectionId: collections.value.find((collection) =>
+            collection.links.some((link) => link._id === itemToDelete.value)
+          )?._id,
+          linkId: itemToDelete.value,
+        });
 
     const response = await fetch(endpoint, {
       method: deleteType.value === 'collection' ? 'DELETE' : 'POST',

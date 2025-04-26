@@ -1,6 +1,9 @@
 <template>
   <div class="grid grid-cols-1 gap-4">
-    <div v-for="(item, index) in sharedItems" :key="item._id" class="relative bg-base-100 shadow-xl p-4 rounded-lg">
+    <div v-if="sharedItems.length === 0" class="flex flex-col items-center justify-center h-screen pb-100">
+      <p class="text-gray-600 text-3xl">No links shared</p>
+    </div>
+    <div v-else v-for="(item, index) in sharedItems" :key="item._id" class="relative bg-base-100 shadow-xl p-4 rounded-lg">
 
       <!-- Shared By -->
       <div class="absolute top-2 left-4 text-sm text-gray-500">

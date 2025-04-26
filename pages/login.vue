@@ -42,6 +42,12 @@ async function login() {
 async function register() {
   errorMessage.value = ''; // Clear any previous error message
   
+  // Validate username length
+  if (registrationData.username.length < 3) {
+    errorMessage.value = 'Username must be at least 3 characters long.';
+    return;
+  }
+
    // Validate email format
    if (!validator.validate(registrationData.email)) {
     errorMessage.value = 'Please enter a valid email address.';

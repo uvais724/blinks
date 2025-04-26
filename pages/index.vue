@@ -10,13 +10,16 @@
     <!-- Tabs -->
     <div class="tabs tabs-boxed mb-4">
       <a class="tab" :class="{ 'tab-active': activeTab === 'saved' }" @click="activeTab = 'saved'">Saved</a>
-      <a class="tab" :class="{ 'tab-active': activeTab === 'collections' }" @click="activeTab = 'collections'">Collections</a>
+      <a class="tab" :class="{ 'tab-active': activeTab === 'collections' }"
+        @click="activeTab = 'collections'">Collections</a>
       <a class="tab" :class="{ 'tab-active': activeTab === 'shared' }" @click="activeTab = 'shared'">Shared</a>
     </div>
 
     <div v-if="activeTab === 'saved'" class="grid grid-cols-1 gap-4">
-      <div v-for="link in links" :key="link._id"
-        class="relative bg-base-100 shadow-xl p-4 rounded-lg">
+      <div v-if="links.length === 0" class="flex flex-col items-center justify-center h-screen pb-100">
+        <p class="text-gray-600 text-3xl">No links saved</p>
+      </div>
+      <div v-else v-for="link in links" :key="link._id" class="relative bg-base-100 shadow-xl p-4 rounded-lg">
         <!-- Delete Button -->
         <button @click="openDeleteConfirmation(link._id)" class="absolute top-2 right-2 text-red-500 hover:text-red-700"
           aria-label="Delete Link">
@@ -28,26 +31,26 @@
         </button>
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-8 gap-4">
           <!-- Thumbnail -->
-        <img :src="link.thumbnail" alt="Thumbnail" class="w-16 h-16 object-cover rounded-lg" />
-        <!-- Link Details -->
-        <div class="flex-1 min-w-0">
-          <h2 class="font-bold text-lg truncate whitespace-normal">{{ link.title }}</h2>
-          <p class="text-sm text-gray-600 break-words whitespace-normal">
-            {{ truncatedDescription(link.description) }}
-          </p>
-        </div>
-        <!-- Add to collection Button -->
-        <button class="btn btn-secondary w-full sm:w-auto" @click="openAddToCollectionPopup(link._id)">
-          Add to Collection
-        </button>
+          <img :src="link.thumbnail" alt="Thumbnail" class="w-16 h-16 object-cover rounded-lg" />
+          <!-- Link Details -->
+          <div class="flex-1 min-w-0">
+            <h2 class="font-bold text-lg truncate whitespace-normal">{{ link.title }}</h2>
+            <p class="text-sm text-gray-600 break-words whitespace-normal">
+              {{ truncatedDescription(link.description) }}
+            </p>
+          </div>
+          <!-- Add to collection Button -->
+          <button class="btn btn-secondary w-full sm:w-auto" @click="openAddToCollectionPopup(link._id)">
+            Add to Collection
+          </button>
 
-        <!-- Share Link Component -->
-         <div class="w-full sm:w-auto">
-          <ShareLink :link-id="link._id" type="Link" />
-         </div>
-  
-        <!-- Open Button -->
-        <a :href="link.url" target="_blank" class="btn btn-primary w-full sm:w-auto">Open</a>
+          <!-- Share Link Component -->
+          <div class="w-full sm:w-auto">
+            <ShareLink :link-id="link._id" type="Link" />
+          </div>
+
+          <!-- Open Button -->
+          <a :href="link.url" target="_blank" class="btn btn-primary w-full sm:w-auto">Open</a>
         </div>
       </div>
     </div>
@@ -104,8 +107,8 @@
     <!-- Collections Tab -->
     <CollectionsTab v-if="activeTab === 'collections'" />
 
-     <!-- Shared Tab -->
-     <SharedTab v-if="activeTab === 'shared'" />
+    <!-- Shared Tab -->
+    <SharedTab v-if="activeTab === 'shared'" />
   </div>
 
 </template>
