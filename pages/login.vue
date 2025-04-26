@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
+import validator from 'email-validator'; 
 
 const { fetch: refreshSession } = useUserSession(); // Import the session management function
 const showRegistrationForm = ref(false); // Controls whether to show the registration form
 const errorMessage = ref(''); // Holds the error message to display
 const showPassword = ref(false); // Controls the visibility of the password fields
+// Password validation regex
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
 // Login form state
 const loginCredentials = reactive({
@@ -38,7 +41,25 @@ async function login() {
 
 async function register() {
   errorMessage.value = ''; // Clear any previous error message
-  console.log('Registering user with', registrationData);
+  
+   // Validate email format
+   if (!validator.validate(registrationData.email)) {
+    errorMessage.value = 'Please enter a valid email address.';
+    return;
+  }
+
+  // Validate email format
+  if (!validator.validate(registrationData.email)) {
+    errorMessage.value = 'Please enter a valid email address.';
+    return;
+  }
+
+  // Validate password format
+  if (!passwordRegex.test(registrationData.password)) {
+    errorMessage.value = 'Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character.';
+    return;
+  }
+
   $fetch('/api/register', {
     method: 'POST',
     body: registrationData,
@@ -93,7 +114,7 @@ async function register() {
           </div>
           <button type="submit" class="btn btn-primary w-full">Login</button>
           <p class="text-sm text-center mt-2">
-            New user? <a @click="showRegistrationForm = true" class="text-blue-500 cursor-pointer">Register here</a>
+            New user? <a @click="showRegistrationForm = true; errorMessage = '';" class="text-blue-500 cursor-pointer">Register here</a>
           </p>
         </form>
 
@@ -128,7 +149,7 @@ async function register() {
           </div>
           <button type="submit" class="btn btn-primary w-full">Register</button>
           <p class="text-sm text-center mt-2">
-            Already have an account? <a @click="showRegistrationForm = false" class="text-blue-500 cursor-pointer">Login here</a>
+            Already have an account? <a @click="showRegistrationForm = false; errorMessage = '';" class="text-blue-500 cursor-pointer">Login here</a>
           </p>
         </form>
       </div>
