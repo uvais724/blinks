@@ -32,7 +32,7 @@ export async function fetchPreview(url: string) {
     // Fallback to Puppeteer
     try {
       const browser = await puppeteer.launch({ 
-        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome',
         args: [
           '--no-sandbox',
           '--disable-setuid-sandbox',
