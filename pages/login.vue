@@ -62,7 +62,7 @@ async function register() {
 
   // Validate password format
   if (!passwordRegex.test(registrationData.password)) {
-    errorMessage.value = 'Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character.';
+    errorMessage.value = 'Password must be at least 6 characters long and include uppercase, lowercase, a number, and a special character.';
     return;
   }
 
