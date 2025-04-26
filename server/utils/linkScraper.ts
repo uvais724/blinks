@@ -27,7 +27,7 @@ export async function fetchPreview(url: string) {
 
     page.on('request', (req) => {
       const type = req.resourceType();
-      if (['image', 'stylesheet', 'font', 'media'].includes(type)) {
+      if (['stylesheet', 'font', 'media'].includes(type)) {
         req.abort();
       } else {
         req.continue();
