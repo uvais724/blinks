@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
     if (!user) {
       throw createError({
         statusCode: 401,
-        message: 'Invalid email or password',
+        message: 'Invalid email',
       });
     }
 
@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
     if (!isPasswordValid) {
       throw createError({
         statusCode: 401,
-        message: 'Invalid email or password',
+        message: 'Invalid password',
       });
     }
 
@@ -40,7 +40,6 @@ export default defineEventHandler(async (event) => {
     await setUserSession(event, {
       userId: user._id,
       username: user.username,
-      password: user.password,
       email: user.email,
       loggedIn: true,
     })
