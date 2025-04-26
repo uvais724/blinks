@@ -12,6 +12,7 @@ export async function fetchPreview(url: string) {
     // Attempt to fetch preview using open-graph-scraper
     const { result, error } = await ogs({ url });
     if (!error && result.success && result.ogTitle && result.ogDescription) {
+      console.log('open-graph-scraper result:', result);
       return {
         title: result.ogTitle || 'No title available',
         description: result.ogDescription || 'No description available',
