@@ -31,7 +31,17 @@ export async function fetchPreview(url: string) {
 
     // Fallback to Puppeteer
     try {
-      const browser = await puppeteer.launch({ headless: true });
+      const browser = await puppeteer.launch({ 
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-gpu',
+          '--single-process',
+          '--no-zygote',
+        ], 
+        headless: true });
       const page = await browser.newPage();
       await page.goto(url, { waitUntil: 'domcontentloaded' });
 
