@@ -1,5 +1,6 @@
 import ogs from 'open-graph-scraper';
 import { defineEventHandler, readBody } from 'h3';
+import { fetchPreview } from '~/server/utils/linkScraper';
 
 interface PreviewResponse {
   success: boolean;
@@ -16,13 +17,14 @@ export default defineEventHandler(async (event): Promise<PreviewResponse> => {
   const { url } = await readBody(event);
 
   try {
-    const { result } = await ogs({ url });
+    const result = await fetchPreview(url);
+    console.log('Preview result:', result);
     return {
       success: true,
       data: {
-        title: result.ogTitle || 'No title',
-        description: result.ogDescription || '',
-        thumbnail: result.ogImage?.[0]?.url || '',
+        title: result.title || 'No title',
+        description: result.description || '',
+        thumbnail: result.tool == 'open-graph-scraper' ? result.image?.[0] || result.image || '' : result.image || '',
         domain: new URL(url).hostname,
       },
     };
