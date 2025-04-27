@@ -50,6 +50,7 @@ ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV JWT_SECRET=9d0f3a5a6df457a5d44a6aee4a31e317cb246adc5f91e54a398e4b7e4a9bb5cc
 ENV MONGODB_URI=mongodb+srv://uvais724:sJ8xjlLKKp36JQJq@cluster0.eouykuz.mongodb.net/blinks
 ENV NUXT_SESSION_PASSWORD=bb7b62e1d9d9486c88fc4f5b5173d2e4f1a58d63a4cbbf0147b26e8b2d7cd6f7
+ENV YOUTUBE_API_KEY=AIzaSyDE3CddjWya-fPIKKllyUGy3dsXT8Rr6P8
 
 # Install Node.js dependencies
 RUN npm run build

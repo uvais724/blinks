@@ -7,9 +7,14 @@ import puppeteer from 'puppeteer';
  * @returns {Promise<object>} - The preview data.
  */
 export async function fetchPreview(url: string) {
-  let headless = true;
   if (url.includes('youtube.com') || url.includes('youtu.be')) {
-    headless = false; // Disable headless mode for YouTube URLs
+    console.log('YouTube URL detected:', url);
+    const videoId = getYouTubeVideoId(url);
+    console.log('YouTube video ID:', videoId);
+    if(videoId === null) {
+      throw new Error('Invalid YouTube URL');     
+    }
+    return fetchYouTubeMetadata(videoId);
   }
 
   // Fallback to Puppeteer
@@ -24,7 +29,7 @@ export async function fetchPreview(url: string) {
         '--single-process',
         '--no-zygote',
       ],
-      headless: headless
+      headless: true
     });
     const page = await browser.newPage();
 
@@ -65,4 +70,41 @@ export async function fetchPreview(url: string) {
     }
     throw new Error('Both open-graph-scraper and Puppeteer failed to fetch preview data.');
   }
+}
+
+function getYouTubeVideoId(url: string): string | null {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+}
+
+async function fetchYouTubeMetadata(videoId: string) {
+  let totalApiCallsToday = 0;
+  const DAILY_QUOTA_LIMIT = 9000;
+
+  if (totalApiCallsToday >= DAILY_QUOTA_LIMIT) {
+    throw new Error('Daily YouTube API quota limit reached');
+  }
+
+  const apiKey = process.env.YOUTUBE_API_KEY;
+  console.log('YouTube API key:', apiKey);
+  console.log('YouTube video ID:', videoId);
+  const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=${apiKey}`;
+  totalApiCallsToday++;
+  const res = await fetch(url);
+  if (!res.ok) {
+    const errorData = await res.json();
+    if (errorData.error?.errors?.[0]?.reason === 'quotaExceeded') {
+      throw new Error('YouTube API quota exceeded');
+    }
+    throw new Error('YouTube API error');
+  }
+
+  const data = await res.json();
+  console.log('YouTube API response:', data);
+  return {
+    title: data.items[0]?.snippet.title,
+    description: data.items[0]?.snippet.description,
+    image: data.items[0]?.snippet.thumbnails?.high?.url,
+  };
 }
