@@ -47,7 +47,6 @@ COPY . .
 ENV NODE_ENV=production
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
 ENV PUPPETEER_SKIP_DOWNLOAD=true
-ENV JWT_SECRET=9d0f3a5a6df457a5d44a6aee4a31e317cb246adc5f91e54a398e4b7e4a9bb5cc
 ENV MONGODB_URI=mongodb+srv://uvais724:sJ8xjlLKKp36JQJq@cluster0.eouykuz.mongodb.net/blinks
 
 # Install Node.js dependencies
