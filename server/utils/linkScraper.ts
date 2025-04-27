@@ -1,4 +1,6 @@
 import puppeteer from 'puppeteer';
+import ogs from 'open-graph-scraper';
+import { cp } from 'fs';
 
 /**
  * Fetches preview data for a given URL using open-graph-scraper.
@@ -15,6 +17,26 @@ export async function fetchPreview(url: string) {
       throw new Error('Invalid YouTube URL');     
     }
     return fetchYouTubeMetadata(videoId);
+  }
+
+  if(url.includes('reddit.com') || url.includes('redd.it')) {
+    console.log('Reddit URL detected:', url);
+    try {
+      const { result, error } = await ogs({ url });
+      if (!error && result.success) {
+        console.log('open-graph-scraper result:', result);
+        return {
+          title: result.ogTitle,
+          description: result.ogDescription,
+          image: Array.isArray(result.ogImage) && result.ogImage.length > 0 ? result.ogImage[0].url : null,
+          url: result.requestUrl || url,
+          tool: 'open-graph-scraper',
+        };
+      }
+    } catch (error) {
+      console.error('Error fetching Reddit preview:', error);
+      throw new Error('Failed to fetch Reddit preview data');
+    }
   }
 
   // Fallback to Puppeteer
