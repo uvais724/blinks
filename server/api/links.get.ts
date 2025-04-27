@@ -2,11 +2,14 @@ import { defineEventHandler } from 'h3';
 import { getSession } from '~/server/utils/session';
 import Link from '../models/Links';
 import { connectToDatabase } from '../utils/db';
+import User from '../models/User';
 
 export default defineEventHandler(async (event) => {
   try {
     await connectToDatabase(); // Ensure MongoDB connection is established
 
+
+    User
     // Retrieve the logged-in user's session
     const session = getSession(event);
     const userId = typeof session !== 'string' && session.id ? session.id : null;
