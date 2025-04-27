@@ -1,6 +1,4 @@
 import puppeteer from 'puppeteer';
-import axios from 'axios';
-import { JSDOM } from 'jsdom'
 
 /**
  * Fetches preview data for a given URL using open-graph-scraper.
