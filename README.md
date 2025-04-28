@@ -11,6 +11,14 @@ Blinks is a Nuxt-based application for managing and sharing collections of links
 
 ## Setup
 
+Make sure to download and install MongoDB
+
+```bash
+# mongod
+mongod.exe --dbpath /data/db
+
+```
+
 Make sure to install dependencies:
 
 ```bash
