@@ -11,6 +11,8 @@ Blinks is a Nuxt-based application for managing and sharing collections of links
 
 ## Setup
 
+Create a .env file in the root directory and add JWT_SECRET in the file.
+
 Make sure to download and install MongoDB
 
 ```bash
