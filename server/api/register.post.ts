@@ -13,6 +13,13 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  if (username.trim().length === 0) {
+    throw createError({
+      statusCode: 400,
+      message: 'Username cannot be empty or whitespace-only',
+    });
+  }
+
   try {
     connectToDatabase();
     // Check if the email or username already exists

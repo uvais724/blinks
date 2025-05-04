@@ -43,7 +43,8 @@ async function register() {
   errorMessage.value = ''; // Clear any previous error message
   
   // Validate username length
-  if (registrationData.username.length < 3) {
+  const trimmedUsername = registrationData.username.trim();
+  if (trimmedUsername.length < 3) {
     errorMessage.value = 'Username must be at least 3 characters long.';
     return;
   }
@@ -65,6 +66,8 @@ async function register() {
     errorMessage.value = 'Password must be at least 6 characters long and include uppercase, lowercase, a number, and a special character.';
     return;
   }
+
+  registrationData.username = trimmedUsername;
 
   $fetch('/api/register', {
     method: 'POST',
