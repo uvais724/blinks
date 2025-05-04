@@ -51,8 +51,5 @@ ENV PUPPETEER_SKIP_DOWNLOAD=true
 # Install Node.js dependencies
 RUN npm run build
 
-# Expose port (if needed)
-EXPOSE 3000
-
 # Start your app
 CMD [ "npm", "start" ]
