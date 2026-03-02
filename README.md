@@ -1,98 +1,127 @@
 # Blinks
 
-Blinks is a Nuxt-based application for managing and sharing collections of links. This project includes user authentication, link submission, and sharing features.
+Blinks is a Nuxt 3 app to save, organize, and share social media links.  
+Users can register/login, preview link metadata, group links into collections, and share links/collections with other users.
+
+## Tech Stack
+
+- Nuxt 3 + Vue 3
+- Tailwind CSS 4 + DaisyUI
+- MongoDB + Mongoose
+- `nuxt-auth-utils` sessions + JWT cookie
+- Puppeteer for metadata scraping fallback
 
 ## Features
 
-- User registration and authentication
-- Link submission and sharing
-- Organized collections of links
-- Responsive design
+- User registration and login
+- Save links with preview metadata (title, description, thumbnail)
+- URL allowlist validation for social platforms
+- Collections (create, add/remove links, delete)
+- Sharing links and collections with other users
+- "Shared with me" view
 
-## Setup
+## Supported URL Domains
 
-Create a .env file in the root directory and add JWT_SECRET in the file.
+- `facebook.com` (`fb.com`, `fb.me`)
+- `linkedin.com` (`lnkd.in`)
+- `reddit.com` (`redd.it`)
+- `youtube.com` (`youtu.be`)
+- `instagram.com` (`instagr.am`)
+- `tiktok.com` (`vm.tiktok.com`)
 
-Make sure to download and install MongoDB
+Only `https://` URLs are accepted.
 
-```bash
-# mongod
-mongod.exe --dbpath /data/db
+## Prerequisites
 
+- Node.js 20+ recommended
+- MongoDB running locally or remotely
+- A Chrome/Chromium binary available for Puppeteer fallback scraping
+
+## Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+JWT_SECRET=change-this-secret
+MONGODB_URI=mongodb://localhost:27017/social-links
+
+# Optional (used for YouTube links)
+YOUTUBE_API_KEY=
+
+# Optional (for custom Chrome path)
+PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
 ```
 
-Make sure to install dependencies:
+## Local Development
+
+Install dependencies:
 
 ```bash
-# npm
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+Run dev server:
 
 ```bash
-# npm
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+App runs at `http://localhost:3000`.
 
-Build the application for production:
+## Scripts
+
+- `npm run dev` - start development server
+- `npm run build` - build for production
+- `npm run start` - run built app
+- `npm run preview` - preview production build locally
+- `npm run generate` - generate static output (Nuxt)
+
+## Docker
+
+A `Dockerfile` is included and:
+
+- uses `node:20-slim`
+- installs `google-chrome-stable`
+- sets `PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome`
+- builds the app and starts with `npm start`
+
+Build and run:
 
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+docker build -t blinks .
+docker run --rm -p 3000:3000 --env-file .env blinks
 ```
 
-Locally preview production build:
+## API Overview
 
-```bash
-# npm
-npm run preview
+Auth:
 
-# pnpm
-pnpm preview
+- `POST /api/register`
+- `POST /api/login`
 
-# yarn
-yarn preview
+Links:
 
-# bun
-bun run preview
-```
+- `GET /api/links`
+- `POST /api/links/preview`
+- `POST /api/links/check`
+- `POST /api/links/create`
+- `DELETE /api/links/:id`
 
-## Deployment
+Collections:
 
-Check out the [Nuxt deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+- `GET /api/collections`
+- `POST /api/collections/create`
+- `POST /api/collections/addToCollection`
+- `POST /api/collections/removeLink`
+- `DELETE /api/collections/:id`
 
-## License
+Sharing:
 
-This project is licensed under the MIT License.
+- `POST /api/shared/link`
+- `POST /api/shared/collection`
+- `GET /api/shared`
+- `DELETE /api/shared/:id`
+
+Users:
+
+- `GET /api/users`
